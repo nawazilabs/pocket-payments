@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Prototype structure
+- Keep the initial payments prototype frontend-only and non-interactive; add service wiring only when requested.
