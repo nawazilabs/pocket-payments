@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   Banknote,
   BarChart3,
@@ -12,6 +13,7 @@ import {
   Gift,
   Heart,
   Lightbulb,
+  LogOut,
   Plane,
   QrCode,
   ReceiptText,
@@ -23,19 +25,21 @@ import {
   UsersRound,
   Wallet,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Paytm-inspired Payments Home" },
+      { title: "Payments Home | Nawazi Labs" },
       {
         name: "description",
-        content: "A mobile-first payments and services home screen prototype.",
+        content: "A mobile-first payments and services home screen from Nawazi Labs.",
       },
-      { property: "og:title", content: "Paytm-inspired Payments Home" },
+      { property: "og:title", content: "Payments Home | Nawazi Labs" },
       {
         property: "og:description",
-        content: "A mobile-first payments and services home screen prototype.",
+        content: "A mobile-first payments and services home screen from Nawazi Labs.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -45,6 +49,59 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const router = useRouter();
+  const [user, setUser] = useState<{
+    email?: string;
+    userMetadata: Record<string, unknown>;
+  } | null>(null);
+  const [checkedSession, setCheckedSession] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted || (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED")) {
+        return;
+      }
+      setUser(session?.user ? { email: session.user.email, userMetadata: session.user.user_metadata } : null);
+      setCheckedSession(true);
+    });
+
+    void supabase.auth.getUser().then(({ data }) => {
+      if (!mounted) return;
+      setUser(data.user ? { email: data.user.email, userMetadata: data.user.user_metadata } : null);
+      setCheckedSession(true);
+    });
+
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (checkedSession && !user) {
+      void router.navigate({ to: "/auth" });
+    }
+  }, [checkedSession, router, user]);
+
+  if (!checkedSession || !user) {
+    return (
+      <main className="wallet-loading" aria-label="Checking your account">
+        <span className="paytm-wordmark">paytm</span>
+      </main>
+    );
+  }
+
+  const displayName = typeof user.userMetadata["full_name"] === "string"
+    ? user.userMetadata["full_name"]
+    : user.email ?? "";
+  const initial = displayName.trim().charAt(0).toUpperCase() || "S";
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    await router.navigate({ to: "/auth" });
+  }
+
   return (
     <main className="paytm-screen">
       <div className="status-bar" aria-hidden="true">
@@ -54,13 +111,18 @@ function Index() {
 
       <header className="topbar">
         <div className="identity">
-          <div className="avatar">S</div>
+          <div className="avatar">{initial}</div>
           <div className="festival-mark">
             <span>GOLDEN</span>
             <span>DIWALI</span>
           </div>
         </div>
-        <Bell className="bell-icon" aria-hidden="true" />
+        <div className="topbar-actions">
+          <Bell className="bell-icon" aria-hidden="true" />
+          <Button variant="ghost" size="icon" aria-label="Sign out" title="Sign out" onClick={signOut}>
+            <LogOut aria-hidden="true" />
+          </Button>
+        </div>
       </header>
 
       <div className="search-field" aria-label="Search for contacts to pay">
