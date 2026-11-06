@@ -31,3 +31,4 @@ use the editor.
 
 ## Prototype structure
 - Keep the initial payments prototype frontend-only and non-interactive; add service wiring only when requested.
+- Use email/password authentication backed by auth.users only; collect the signup name transiently without persisting profile data.
