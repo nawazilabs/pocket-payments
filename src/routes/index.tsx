@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -50,6 +51,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<{
     email?: string;
     userMetadata: Record<string, unknown>;
@@ -98,8 +100,10 @@ function Index() {
   const initial = displayName.trim().charAt(0).toUpperCase() || "S";
 
   async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
     await supabase.auth.signOut();
-    await router.navigate({ to: "/auth" });
+    await router.navigate({ to: "/auth", replace: true });
   }
 
   return (
