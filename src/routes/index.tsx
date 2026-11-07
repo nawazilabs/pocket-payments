@@ -53,7 +53,7 @@ function Index() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [user, setUser] = useState<{
-    email?: string;
+    email?: string | undefined;
     userMetadata: Record<string, unknown>;
   } | null>(null);
   const [checkedSession, setCheckedSession] = useState(false);
