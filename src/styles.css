@@ -59,6 +59,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "Inter", sans-serif;
 }
 
 :root {
@@ -149,6 +150,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Inter", sans-serif;
   }
 }
 
@@ -160,7 +162,7 @@
   --color-wallet-soft-blue: var(--wallet-soft-blue);
   --color-wallet-gold: var(--wallet-gold);
   --color-wallet-red: var(--wallet-red);
-  --font-display: "Arial", sans-serif;
+  --font-display: "Inter", sans-serif;
 }
 
 .paytm-screen {
@@ -170,7 +172,7 @@
   padding: 0 0.9rem 7.25rem;
   color: var(--wallet-ink);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .status-bar {
@@ -314,7 +316,7 @@
   padding: 2rem 1.1rem;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", sans-serif;
 }
 .auth-wrap { width: min(100%, 27rem); }
 .auth-brand { display: flex; align-items: center; gap: 0.65rem; margin: 0 0 2rem 0.2rem; }
